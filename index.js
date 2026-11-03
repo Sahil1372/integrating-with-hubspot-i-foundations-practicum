@@ -3,6 +3,7 @@ const axios = require('axios');
 const app = express();
 
 app.set('view engine', 'pug');
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -67,5 +68,64 @@ app.post('/update', async (req, res) => {
 */
 
 
-// * Localhost
+
+
+app.get('/', async (req, res) => {
+    
+    const customObjectId = '2-271021515'; 
+    const url = `https://api.hubapi.com/crm/v3/objects/${customObjectId}?properties=name`;
+
+    
+    const myHeaders = {
+        'Authorization': `Bearer ${process.env.PRIVATE_APP_ACCESS}`,
+        'Content-Type': 'application/json'
+    };
+
+    try {
+        
+        console.log("The waiter is holding this exact pass: ", myHeaders.Authorization);
+        
+        const response = await axios.get(url, { headers: myHeaders });
+        res.render('homepage', { items: response.data.results });
+        
+    } catch (error) {
+        console.error(error.response.data);
+        res.send('Oops! Something went wrong getting the data.');
+    }
+});
+
+
+app.get('/update-cobj', (req, res) => {
+    res.render('updates');
+});
+
+
+app.post('/update-cobj', async (req, res) => {
+    const customObjectId = '2-271021515'; 
+    const url = `https://api.hubapi.com/crm/v3/objects/${customObjectId}`;
+    
+    const myHeaders = {
+        'Authorization': `Bearer ${process.env.PRIVATE_APP_ACCESS}`,
+        'Content-Type': 'application/json'
+    };
+
+    
+    const newData = {
+        properties: {
+            name: req.body.name,
+            how_many_mountains_have_you_climb_till_now: "1"
+        
+        }
+    };
+
+    try {
+        
+        await axios.post(url, newData, { headers: myHeaders });
+        res.redirect('/'); // 
+    } catch (error) {
+        console.log("THE MISSING INGREDIENT IS:", JSON.stringify(error.response.data.context));
+        res.send('Oops! Something went wrong adding the data.');
+    }
+});
+
 app.listen(3000, () => console.log('Listening on http://localhost:3000'));

@@ -1,0 +1,22 @@
+doctype html
+html
+  head
+    title My Custom Objects
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    style.
+      body { font-family: Arial, sans-serif; padding: 20px; }
+      table { border-collapse: collapse; width: 100%; max-width: 600px; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+      th { background-color: #f2f2f2; }
+  body
+    h1 My HubSpot Data
+    table
+      thead
+        tr
+          th Item Name
+          th HubSpot ID
+      tbody
+        each item in items
+          tr
+            td #{item.properties.name}
+            td #{item.id}
